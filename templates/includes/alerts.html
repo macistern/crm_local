@@ -1,0 +1,7 @@
+{% if messages %}
+  <div class="mb-5 space-y-2" role="status">
+    {% for message in messages %}
+      <div class="flex items-start gap-3 rounded-xl border border-emerald-200/80 bg-white px-4 py-3.5 text-sm text-emerald-800 shadow-soft"><span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold">✓</span><span class="pt-0.5">{{ message }}</span></div>
+    {% endfor %}
+  </div>
+{% endif %}

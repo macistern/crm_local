@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block unauthenticated %}
+  <div class="mx-auto grid w-full max-w-5xl overflow-hidden rounded-[28px] border border-white/80 bg-white shadow-[0_35px_90px_-40px_rgba(20,34,56,0.35)] md:grid-cols-[1.05fr_0.95fr]">
+    <section class="relative hidden min-h-[560px] flex-col justify-between overflow-hidden bg-ink-950 p-10 text-white md:flex lg:p-12">
+      <div class="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-500/20 blur-3xl"></div>
+      <div class="absolute -bottom-28 -left-20 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl"></div>
+      <img class="relative z-10 h-auto w-[190px]" src="{% static 'images/modular-open.svg' %}" alt="MC Soluciones">
+      <div class="relative z-10 max-w-md">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-brand-100/70">Relaciones que crecen</p>
+        <h2 class="mt-4 text-4xl font-semibold leading-tight tracking-tight">Todo tu equipo,<br>en sintonía.</h2>
+        <p class="mt-4 max-w-sm text-sm leading-6 text-slate-300">Organizá clientes y mantené cada conversación cerca. Simple, claro y hecho para tu negocio.</p>
+      </div>
+      <div class="relative z-10 flex items-center gap-2 text-xs text-slate-400"><span class="h-2 w-2 rounded-full bg-brand-500"></span>Tu espacio de trabajo local</div>
+    </section>
+    <section class="flex items-center p-7 sm:p-10 lg:p-12">
+      <div class="mx-auto w-full max-w-sm">
+        <div class="mb-9 md:hidden">
+          <img class="h-auto w-[180px]" src="{% static 'images/modular-open.svg' %}" alt="MC Soluciones">
+        </div>
+        <p class="text-sm font-semibold text-brand-700">Bienvenido de nuevo</p>
+        <h1 class="mt-2 text-3xl font-semibold tracking-tight text-ink-900">Iniciar sesión</h1>
+        <p class="mt-2 text-sm leading-6 text-slate-500">Ingresá con tu usuario para continuar.</p>
+        {% if form.errors %}<p class="mt-5 rounded-xl border border-red-100 bg-red-50 p-3.5 text-sm text-red-700">El usuario o la contraseña no son correctos. Revisá tus datos e intentá nuevamente.</p>{% endif %}
+        <form method="post" class="mt-7 space-y-5">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ next }}">
+          <label class="block text-sm font-semibold text-slate-700">Usuario
+            <input class="field-control mt-2 w-full" type="text" name="username" autocomplete="username" placeholder="Tu usuario" required autofocus>
+          </label>
+          <label class="block text-sm font-semibold text-slate-700">Contraseña
+            <input class="field-control mt-2 w-full" type="password" name="password" autocomplete="current-password" placeholder="Tu contraseña" required>
+          </label>
+          <button class="group flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/20 transition hover:-translate-y-0.5 hover:bg-brand-700" type="submit">
+            Ingresar <span class="transition group-hover:translate-x-1" aria-hidden="true">→</span>
+          </button>
+        </form>
+        <p class="mt-8 text-center text-xs text-slate-400">Acceso privado para el equipo</p>
+      </div>
+    </section>
+  </div>
+{% endblock %}

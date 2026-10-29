@@ -1,0 +1,16 @@
+<div class="panel overflow-hidden">
+  <div class="hidden grid-cols-12 gap-4 border-b border-slate-100 bg-slate-50/80 px-5 py-3.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400 md:grid">
+    <span class="col-span-4">Cliente</span><span class="col-span-3">Contacto</span><span class="col-span-2">Etiquetas</span><span class="col-span-2">Estado</span><span class="col-span-1"></span>
+  </div>
+  {% for cliente in clientes %}
+    <a class="group grid gap-2 border-b border-slate-100/80 px-4 py-4 transition last:border-0 hover:bg-brand-50/30 sm:px-5 md:grid-cols-12 md:items-center md:gap-4" href="{% url 'detalle_cliente' cliente.pk %}">
+      <span class="flex items-center gap-3 md:col-span-4"><span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-100 to-sky-100 text-sm font-bold uppercase text-brand-800">{{ cliente.nombre_completo|first }}</span><span class="min-w-0"><span class="block truncate font-semibold text-ink-900">{{ cliente.nombre_completo }}</span><span class="mt-1 block truncate text-sm text-slate-500">{{ cliente.empresa|default:"Sin empresa" }}</span></span></span>
+      <span class="text-sm text-slate-600 md:col-span-3">{{ cliente.telefono_whatsapp }}{% if cliente.email %}<span class="block truncate text-slate-500">{{ cliente.email }}</span>{% endif %}</span>
+      <span class="flex flex-wrap gap-1 md:col-span-2">{% for etiqueta in cliente.etiquetas.all %}<span class="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700">{{ etiqueta.nombre }}</span>{% empty %}<span class="text-sm text-slate-400">—</span>{% endfor %}</span>
+      <span class="md:col-span-2"><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold {% if cliente.estado == 'activo' %}bg-emerald-50 text-emerald-700{% else %}bg-slate-100 text-slate-600{% endif %}"><span class="h-1.5 w-1.5 rounded-full {% if cliente.estado == 'activo' %}bg-emerald-500{% else %}bg-slate-400{% endif %}"></span>{{ cliente.get_estado_display }}</span></span>
+      <span class="hidden text-right text-slate-300 transition group-hover:text-brand-600 md:col-span-1 md:block" aria-hidden="true">→</span>
+    </a>
+  {% empty %}
+    <p class="px-5 py-10 text-center text-sm text-slate-500">No se encontraron clientes con esos criterios.</p>
+  {% endfor %}
+</div>

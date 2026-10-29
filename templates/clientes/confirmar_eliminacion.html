@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Eliminar cliente{% endblock %}
+{% block topbar_title %}Eliminar cliente{% endblock %}
+{% block content %}
+  <div class="mx-auto max-w-xl">
+    <a class="text-sm font-medium text-brand-700 hover:text-brand-900" href="{% url 'detalle_cliente' cliente.pk %}">← Volver al cliente</a>
+    <section class="mt-4 rounded-2xl border border-red-100 bg-white p-5 shadow-soft sm:p-7">
+      <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50 text-xl font-bold text-red-700" aria-hidden="true">!</div>
+      <h1 class="mt-4 text-2xl font-semibold text-ink-900">Eliminar cliente</h1>
+      <p class="mt-2 text-sm leading-6 text-slate-600">Vas a eliminar permanentemente a <strong>{{ cliente.nombre_completo }}</strong> y sus datos. Esta acción no se puede deshacer.</p>
+      {% if cliente.mensajes.exists %}
+        <p class="mt-3 rounded-lg bg-blue-50 p-3 text-sm leading-5 text-blue-900">El historial de WhatsApp ({{ cliente.mensajes.count }} mensajes) se conservará, junto con el nombre y teléfono registrados al prepararlos.</p>
+      {% endif %}
+      {% if error_confirmacion %}<p class="mt-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">Marcá la casilla para confirmar que querés eliminar este cliente.</p>{% endif %}
+      <form method="post" action="{% url 'eliminar_cliente' cliente.pk %}" class="mt-5">
+        {% csrf_token %}
+        <label class="flex items-start gap-3 rounded-lg border border-slate-200 p-3 text-sm">
+          <input class="mt-0.5 h-4 w-4 rounded border-slate-300 text-red-600 focus:ring-red-600" type="checkbox" name="confirmar" value="si" required>
+          <span>Entiendo que esta acción es permanente y quiero eliminar este cliente.</span>
+        </label>
+        <div class="mt-5 flex flex-wrap gap-3">
+          <button class="rounded-xl bg-red-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-700" type="submit">Confirmar eliminación</button>
+          <a class="rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold transition hover:bg-slate-50" href="{% url 'detalle_cliente' cliente.pk %}">Cancelar</a>
+        </div>
+      </form>
+    </section>
+  </div>
+{% endblock %}

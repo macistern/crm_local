@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ cliente.nombre_completo }}{% endblock %}
+{% block topbar_title %}Ficha del cliente{% endblock %}
+{% block content %}
+  <div class="mb-5"><a class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-brand-700" href="{% url 'lista_clientes' %}"><span aria-hidden="true">←</span> Volver a clientes</a></div>
+  <section class="panel overflow-hidden">
+    <div class="h-1.5 bg-gradient-to-r from-brand-500 via-teal-400 to-sky-400"></div>
+    <div class="p-5 sm:p-7">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div class="flex min-w-0 items-center gap-4">
+        <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-brand-100 to-sky-100 text-xl font-bold uppercase text-brand-800 sm:h-16 sm:w-16">{{ cliente.nombre_completo|first }}</span>
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-3"><h1 class="text-2xl font-semibold tracking-tight text-ink-900 sm:text-3xl">{{ cliente.nombre_completo }}</h1><span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold {% if cliente.estado == 'activo' %}bg-emerald-50 text-emerald-700{% else %}bg-slate-100 text-slate-600{% endif %}"><span class="h-1.5 w-1.5 rounded-full {% if cliente.estado == 'activo' %}bg-emerald-500{% else %}bg-slate-400{% endif %}"></span>{{ cliente.get_estado_display }}</span></div>
+          <p class="mt-2 text-sm text-slate-500">Cliente desde {{ cliente.fecha_creacion|date:"d/m/Y" }} · Actualizado {{ cliente.fecha_modificacion|date:"d/m/Y" }}</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        {% if perms.clientes.change_cliente %}<a class="rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50" href="{% url 'editar_cliente' cliente.pk %}">Editar</a>{% endif %}
+        {% if cliente.estado == "activo" and perms.clientes.add_mensajewhatsapp %}<button class="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/15 transition hover:-translate-y-0.5 hover:bg-brand-700" type="button" data-open-whatsapp><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg>Enviar WhatsApp</button>{% endif %}
+        {% if perms.clientes.delete_cliente %}<a class="rounded-xl border border-red-100 px-3.5 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-50" href="{% url 'eliminar_cliente' cliente.pk %}">Eliminar</a>{% endif %}
+      </div>
+    </div>
+    <dl class="mt-7 grid gap-3 border-t border-slate-100 pt-6 sm:grid-cols-2">
+      <div class="rounded-xl bg-slate-50/80 p-4"><dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Teléfono WhatsApp</dt><dd class="mt-2 font-semibold text-ink-900">{{ cliente.telefono_whatsapp }}</dd></div>
+      <div class="rounded-xl bg-slate-50/80 p-4"><dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Email</dt><dd class="mt-2 font-semibold text-ink-900">{{ cliente.email|default:"—" }}</dd></div>
+      <div class="rounded-xl bg-slate-50/80 p-4"><dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Empresa</dt><dd class="mt-2 font-semibold text-ink-900">{{ cliente.empresa|default:"—" }}</dd></div>
+      <div class="rounded-xl bg-slate-50/80 p-4"><dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Etiquetas</dt><dd class="mt-2 flex flex-wrap gap-1">{% for etiqueta in cliente.etiquetas.all %}<span class="rounded-full bg-brand-100 px-2.5 py-1 text-xs font-semibold text-brand-700">{{ etiqueta.nombre }}</span>{% empty %}<span class="text-slate-500">—</span>{% endfor %}</dd></div>
+      <div class="rounded-xl bg-slate-50/80 p-4 sm:col-span-2"><dt class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">Notas</dt><dd class="mt-2 whitespace-pre-wrap text-sm leading-6 text-slate-700">{{ cliente.notas|default:"Sin notas"|linebreaksbr }}</dd></div>
+    </dl>
+    {% if cliente.estado == "activo" and perms.clientes.deactivate_cliente %}
+      <form method="post" action="{% url 'desactivar_cliente' cliente.pk %}" class="mt-6 border-t border-slate-100 pt-5" data-confirm="¿Desactivar este cliente? El historial se conservará.">
+        {% csrf_token %}<button class="text-sm font-medium text-red-700 hover:text-red-900" type="submit">Desactivar cliente</button>
+      </form>
+    {% endif %}
+    </div>
+  </section>
+  <section class="mt-7">
+    <div class="mb-4 flex items-center justify-between"><div><h2 class="text-xl font-semibold text-ink-900">Historial de WhatsApp</h2><p class="mt-1 text-sm text-slate-500">Conversaciones preparadas para este contacto</p></div><span class="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200">{{ cliente.mensajes.count }} mensajes</span></div>
+    <div class="space-y-3">
+      {% for mensaje in cliente.mensajes.all %}
+        <article class="panel p-4 sm:p-5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="rounded-full px-2.5 py-1 text-xs font-medium {% if mensaje.estado == 'enviado_manual' %}bg-emerald-50 text-emerald-700{% elif mensaje.estado == 'abierto_en_whatsapp' %}bg-amber-50 text-amber-800{% else %}bg-slate-100 text-slate-600{% endif %}">{{ mensaje.get_estado_display }}</span>
+            <time class="text-xs text-slate-500" datetime="{{ mensaje.fecha_envio_manual|default:mensaje.fecha_hora|date:'c' }}">{% if mensaje.fecha_envio_manual %}Enviado {{ mensaje.fecha_envio_manual|date:"d/m/Y H:i" }}{% else %}Preparado {{ mensaje.fecha_hora|date:"d/m/Y H:i" }}{% endif %} · {{ mensaje.usuario.get_username }}</time>
+          </div>
+          <p class="mt-3 whitespace-pre-wrap text-sm leading-6">{{ mensaje.texto }}</p>
+          {% if mensaje.estado == "abierto_en_whatsapp" and perms.clientes.change_mensajewhatsapp %}
+            <form method="post" action="{% url 'marcar_mensaje_enviado' mensaje.pk %}" class="mt-3">
+              {% csrf_token %}<button class="rounded-lg border border-emerald-300 px-3 py-1.5 text-sm font-medium text-emerald-800 hover:bg-emerald-50" type="submit">Marcar como enviado</button>
+            </form>
+          {% endif %}
+        </article>
+      {% empty %}
+        <div class="rounded-xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center text-sm text-slate-500">Todavía no hay mensajes para este cliente.</div>
+      {% endfor %}
+    </div>
+  </section>
+  {% if cliente.estado == "activo" and perms.clientes.add_mensajewhatsapp %}
+    <dialog id="whatsapp-modal" data-nombre="{{ cliente.nombre_completo }}" data-empresa="{{ cliente.empresa|default:'nuestro equipo' }}" class="w-[calc(100%-2rem)] max-w-lg rounded-2xl p-0 shadow-2xl backdrop:bg-slate-900/40" {% if abrir_modal_whatsapp %}open{% endif %}>
+      <div class="border-b border-slate-100 px-5 py-4"><div class="flex items-center justify-between"><div><p class="text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">Nuevo mensaje</p><h2 class="mt-1 text-lg font-semibold text-ink-900">Preparar WhatsApp</h2></div><button type="button" class="rounded-xl px-2.5 py-2 text-slate-500 transition hover:bg-slate-100" data-close-whatsapp aria-label="Cerrar">✕</button></div><p class="mt-2 text-sm text-slate-500">Para {{ cliente.nombre_completo }} · {{ cliente.telefono_whatsapp }}</p></div>
+      <form method="post" action="{% url 'enviar_whatsapp' cliente.pk %}" target="_blank" class="p-5">
+        {% csrf_token %}
+        <div class="mb-4"><p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Plantillas disponibles</p><div class="flex flex-wrap gap-2">
+          {% for plantilla in plantillas_activas %}<button class="rounded-full border border-slate-300 px-3 py-1.5 text-xs hover:bg-slate-50" type="button" data-quick-message="{{ plantilla.texto }}" data-plantilla-id="{{ plantilla.pk }}">{{ plantilla.nombre }}</button>{% empty %}<p class="text-sm text-slate-500">No hay plantillas activas.</p>{% endfor %}
+        </div></div>
+        <input type="hidden" name="plantilla" value="">
+        <label class="block text-sm font-medium">Mensaje
+          <textarea class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 leading-6" name="texto" rows="5" maxlength="4000" required>{{ mensaje_form.texto.value|default_if_none:"" }}</textarea>
+        </label>
+        {% if mensaje_form.texto.errors %}<p class="mt-1 text-sm text-red-600">{{ mensaje_form.texto.errors|join:", " }}</p>{% endif %}
+        <p class="mt-3 rounded-lg bg-amber-50 p-3 text-xs leading-5 text-amber-900">Se abrirá WhatsApp con el texto preparado. El CRM no envía el mensaje ni puede confirmar que se envió.</p>
+        <div class="mt-5 flex justify-end gap-2"><button class="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100" type="button" data-close-whatsapp>Cancelar</button><button class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700" type="submit">Abrir WhatsApp</button></div>
+      </form>
+    </dialog>
+  {% endif %}
+{% endblock %}

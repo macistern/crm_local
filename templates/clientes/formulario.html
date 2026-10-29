@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block topbar_title %}{{ titulo }}{% endblock %}
+{% block content %}
+  <div class="mb-6"><a class="text-sm font-semibold text-slate-500 transition hover:text-brand-700" href="{% if cliente %}{% url 'detalle_cliente' cliente.pk %}{% else %}{% url 'lista_clientes' %}{% endif %}">← Volver</a><h1 class="mt-3 text-3xl font-semibold tracking-tight text-ink-900">{{ titulo }}</h1><p class="mt-2 text-sm text-slate-500">Completá los datos del contacto.</p></div>
+  <form method="post" class="panel max-w-3xl p-5 sm:p-7">
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="grid gap-5 sm:grid-cols-2">
+      {% for field in form %}
+        {% if field.name == "etiquetas" %}
+          <fieldset class="sm:col-span-2"><legend class="mb-2 text-sm font-medium">{{ field.label }}</legend><div class="flex flex-wrap gap-x-5 gap-y-2">{% for choice in field %}<label class="inline-flex items-center gap-2 text-sm text-slate-700">{{ choice.tag }}{{ choice.choice_label }}</label>{% empty %}<p class="text-sm text-slate-500">No hay etiquetas creadas todavía. Se pueden administrar desde Configuración.</p>{% endfor %}</div>{% if field.errors %}<p class="mt-1 text-sm text-red-600">{{ field.errors|join:", " }}</p>{% endif %}</fieldset>
+        {% else %}
+          <label class="block text-sm font-medium {% if field.name == 'notas' %}sm:col-span-2{% endif %}">{{ field.label }}{% if field.field.required %}<span class="text-red-600"> *</span>{% endif %}
+            {{ field }}
+            {% if field.help_text %}<span class="mt-1 block text-xs font-normal text-slate-500">{{ field.help_text }}</span>{% endif %}
+            {% if field.errors %}<span class="mt-1 block text-sm font-normal text-red-600">{{ field.errors|join:", " }}</span>{% endif %}
+          </label>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="mt-7 flex gap-3 border-t border-slate-100 pt-5">
+      <button class="rounded-xl bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/15 transition hover:bg-brand-700" type="submit">Guardar cliente</button>
+      <a class="rounded-xl px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100" href="{% if cliente %}{% url 'detalle_cliente' cliente.pk %}{% else %}{% url 'lista_clientes' %}{% endif %}">Cancelar</a>
+    </div>
+  </form>
+{% endblock %}

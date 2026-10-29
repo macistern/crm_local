@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Clientes{% endblock %}
+{% block topbar_title %}Clientes{% endblock %}
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div><p class="text-sm font-medium text-brand-700">Directorio</p><h1 class="mt-1 text-3xl font-semibold tracking-tight text-ink-900">Clientes</h1><p class="mt-2 text-sm text-slate-500">Administrá y encontrá rápidamente tus contactos.</p></div>
+    <a class="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/15 transition hover:-translate-y-0.5 hover:bg-brand-700" href="{% url 'crear_cliente' %}"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Nuevo cliente</a>
+  </div>
+  <form method="get" action="{% url 'lista_clientes' %}" hx-get="{% url 'lista_clientes' %}" hx-trigger="input changed delay:300ms from:input[name='q'], change from:select" hx-target="#client-results" hx-swap="innerHTML" hx-push-url="true" class="panel mb-5 grid gap-4 p-4 sm:grid-cols-2 sm:p-5 lg:grid-cols-4">
+    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500 sm:col-span-2">Buscar cliente
+      <span class="relative mt-1.5 block">
+        <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input class="field-control w-full pl-9" name="q" value="{{ consulta }}" placeholder="Nombre, teléfono, email o empresa">
+      </span>
+    </label>
+    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Estado
+      <select class="field-control mt-1.5 w-full" name="estado">
+        <option value="">Todos</option>
+        <option value="activo" {% if estado_seleccionado == "activo" %}selected{% endif %}>Activo</option>
+        <option value="inactivo" {% if estado_seleccionado == "inactivo" %}selected{% endif %}>Inactivo</option>
+      </select>
+    </label>
+    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Etiqueta
+      <select class="field-control mt-1.5 w-full" name="etiqueta">
+        <option value="">Todas</option>
+        {% for etiqueta in etiquetas %}<option value="{{ etiqueta.pk }}" {% if etiqueta_seleccionada == etiqueta.pk|stringformat:"s" %}selected{% endif %}>{{ etiqueta.nombre }}</option>{% endfor %}
+      </select>
+    </label>
+    <div class="flex items-end gap-2 sm:col-span-2 lg:col-span-4">
+      <button class="rounded-xl bg-ink-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-ink-800" type="submit">Aplicar filtros</button>
+      <a class="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-ink-900" href="{% url 'lista_clientes' %}">Limpiar</a>
+    </div>
+  </form>
+  <div id="client-results">{% include "clientes/partials/lista_resultados.html" %}</div>
+{% endblock %}

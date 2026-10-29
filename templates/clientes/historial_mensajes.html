@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Mensajes enviados{% endblock %}
+{% block topbar_title %}Mensajes enviados{% endblock %}
+{% block content %}
+  <div class="mb-6"><p class="text-sm font-medium text-brand-700">WhatsApp</p><h1 class="mt-1 text-3xl font-semibold tracking-tight text-ink-900">Mensajes enviados</h1><p class="mt-2 text-sm text-slate-500">Mensajes marcados como enviados manualmente por el equipo.</p></div>
+  <form method="get" class="panel mb-5 flex flex-col gap-3 p-4 sm:flex-row sm:p-5">
+    <label class="sr-only" for="message-search">Buscar mensajes</label><input id="message-search" class="field-control min-w-0 flex-1" name="q" value="{{ consulta }}" placeholder="Cliente, teléfono, texto o usuario">
+    <button class="rounded-xl bg-ink-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-ink-800" type="submit">Buscar</button>
+  </form>
+  <div class="space-y-3">
+    {% for mensaje in mensajes %}
+      <article class="panel p-4 sm:p-5">
+        <div class="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            {% if mensaje.cliente_id %}<a class="font-semibold text-ink-900 hover:text-brand-700" href="{% url 'detalle_cliente' mensaje.cliente_id %}">{{ mensaje.nombre_cliente }}</a>{% else %}<span class="font-semibold text-slate-800">{{ mensaje.nombre_cliente }} <span class="font-normal text-slate-500">(cliente eliminado)</span></span>{% endif %}
+            <p class="mt-1 text-sm text-slate-500">{{ mensaje.telefono_cliente }}</p>
+          </div>
+          <div class="text-right"><span class="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">Enviado manualmente</span><p class="mt-2 text-xs text-slate-500">{{ mensaje.fecha_envio_manual|date:"d/m/Y H:i" }} · {{ mensaje.usuario.get_username }}</p></div>
+        </div>
+        <p class="mt-4 whitespace-pre-wrap border-t border-slate-100 pt-3 text-sm leading-6">{{ mensaje.texto }}</p>
+      </article>
+    {% empty %}
+      <div class="rounded-xl border border-dashed border-slate-300 bg-white px-5 py-10 text-center text-sm text-slate-500">No hay mensajes marcados como enviados{% if consulta %} que coincidan con esa búsqueda{% endif %}.</div>
+    {% endfor %}
+  </div>
+{% endblock %}

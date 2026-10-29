@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 150" role="img" aria-labelledby="title description">
+  <title id="title">MC Soluciones — Conjunto abierto</title>
+  <desc id="description">Tres módulos verde lima y un módulo azul claro desplazado, combinando estructura y adaptación.</desc>
+  <g transform="translate(24 36)">
+    <rect x="0" y="0" width="36" height="36" rx="8" fill="#B8E33A"/>
+    <rect x="42" y="0" width="36" height="36" rx="8" fill="#B8E33A"/>
+    <rect x="0" y="42" width="36" height="36" rx="8" fill="#B8E33A"/>
+    <rect x="48" y="48" width="30" height="30" rx="8" fill="#8CC6E4"/>
+  </g>
+  <text x="120" y="81" fill="#FFFFFF" font-family="Avenir Next, Century Gothic, sans-serif" font-size="48" font-weight="700" letter-spacing="-1.5">MC</text>
+  <text x="122" y="108" fill="#FFFFFF" font-family="Avenir Next, Century Gothic, sans-serif" font-size="17" font-weight="500" letter-spacing="2.4">SOLUCIONES</text>
+</svg>

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Plantillas WhatsApp{% endblock %}
+{% block topbar_title %}Plantillas WhatsApp{% endblock %}
+{% block content %}
+  <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+    <div><p class="text-sm font-medium text-brand-700">Mensajería</p><h1 class="mt-1 text-3xl font-semibold tracking-tight text-ink-900">Plantillas WhatsApp</h1><p class="mt-2 text-sm text-slate-500">Editá los textos que aparecen al preparar un mensaje.</p></div>
+    {% if perms.clientes.add_plantillawhatsapp %}<a class="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/15 transition hover:-translate-y-0.5 hover:bg-brand-700" href="{% url 'crear_plantilla' %}"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Nueva plantilla</a>{% endif %}
+  </div>
+  <div class="grid gap-4 lg:grid-cols-2">
+    {% for plantilla in plantillas %}
+      <article class="panel p-5 transition hover:-translate-y-0.5 hover:shadow-lg">
+        <div class="flex items-start justify-between gap-3">
+          <div><span class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-700"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></span><h2 class="mt-4 font-semibold text-ink-900">{{ plantilla.nombre }}</h2><span class="mt-2 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold {% if plantilla.activa %}bg-emerald-50 text-emerald-700{% else %}bg-slate-100 text-slate-600{% endif %}"><span class="h-1.5 w-1.5 rounded-full {% if plantilla.activa %}bg-emerald-500{% else %}bg-slate-400{% endif %}"></span>{% if plantilla.activa %}Activa{% else %}Inactiva{% endif %}</span></div>
+          {% if perms.clientes.change_plantillawhatsapp %}<a class="rounded-lg px-3 py-2 text-sm font-semibold text-brand-700 transition hover:bg-brand-50" href="{% url 'editar_plantilla' plantilla.pk %}">Editar</a>{% endif %}
+        </div>
+        <p class="mt-4 whitespace-pre-wrap text-sm leading-6 text-slate-700">{{ plantilla.texto }}</p>
+        {% if perms.clientes.delete_plantillawhatsapp %}
+          <form method="post" action="{% url 'eliminar_plantilla' plantilla.pk %}" class="mt-4 border-t border-slate-100 pt-3" data-confirm="¿Eliminar esta plantilla? Los mensajes ya preparados no se modifican.">
+            {% csrf_token %}<button class="text-sm font-medium text-red-700 hover:text-red-900" type="submit">Eliminar plantilla</button>
+          </form>
+        {% endif %}
+      </article>
+    {% empty %}
+      <div class="rounded-xl border border-dashed border-slate-300 bg-white px-5 py-10 text-center text-sm text-slate-500 lg:col-span-2">Todavía no hay plantillas.</div>
+    {% endfor %}
+  </div>
+  <p class="mt-5 rounded-xl border border-sky-100 bg-sky-50 p-4 text-sm leading-6 text-sky-900">Variables disponibles: <code>{nombre}</code> se reemplaza por el nombre del cliente y <code>{empresa}</code> por su empresa (o “nuestro equipo” si no tiene empresa).</p>
+{% endblock %}
